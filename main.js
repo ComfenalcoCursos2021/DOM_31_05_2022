@@ -1,17 +1,21 @@
+let ws = new Worker('webWorker.js');
+ws.postMessage({mensaje: false});
 
-let mydiv = document.createElement('DIV');
-let texto = document.createTextNode('Miguel Angel Castro Escamilla');
-let mybr = document.createElement('BR');
+let frag = document.createDocumentFragment();
+let mydiv = document.createElement("DIV");
+ws.addEventListener("message", (e)=>{
+    if(e.data.mensaje){
+        console.log(frag);
+        document.body.appendChild(frag);
+        document.querySelector(".mensaje").innerHTML = "";
+    }else{
+        console.log(e.data.plantilla);
+        document.querySelector(".mensaje").innerHTML = "Cargando...";
+        mydiv.insertAdjacentHTML("beforeend", e.data.plantilla);
+        frag.append(mydiv);
+    }
+})
 
-mydiv.appendChild(texto);
-mydiv.appendChild(mybr);
-mydiv.id = "MYID";
-mydiv.setAttribute('name', "nombreDIV");
-mydiv.insertAdjacentHTML("beforeend", //html
-    `
-        edad: <b id="myid">23</b>
-    `
-);
-document.body.insertAdjacentElement("beforeend", mydiv);
-
-console.log(mydiv);
+function iniciar(){
+    ws.postMessage({mensaje: true});
+}
